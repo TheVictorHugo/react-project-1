@@ -3,9 +3,10 @@ import React from 'react'
 type MenuProps = {
   open: boolean
   onClose: () => void
+  onNavigate?: (route: string) => void
 }
 
-function Menu({ open, onClose }: MenuProps) {
+function Menu({ open, onClose, onNavigate }: MenuProps) {
   return (
     <>
       {/* Overlay */}
@@ -40,9 +41,18 @@ function Menu({ open, onClose }: MenuProps) {
         zIndex: 100,
         transition: 'left 0.3s'
       }}>
-        <a href="#" style={{ color: '#fff', textDecoration: 'none', padding: '8px 24px' }} onClick={onClose}>Início</a>
-        <a href="#" style={{ color: '#fff', textDecoration: 'none', padding: '8px 24px' }} onClick={onClose}>Filmes</a>
-        <a href="#" style={{ color: '#fff', textDecoration: 'none', padding: '8px 24px' }} onClick={onClose}>Sobre</a>
+        <a href="#"
+          style={{ color: '#fff', textDecoration: 'none', padding: '8px 24px' }}
+          onClick={e => { e.preventDefault(); onNavigate && onNavigate('/') }}
+        >Início</a>
+        <a href="#"
+          style={{ color: '#fff', textDecoration: 'none', padding: '8px 24px' }}
+          onClick={e => { e.preventDefault(); onNavigate && onNavigate('/filmes') }}
+        >Filmes</a>
+        <a href="#"
+          style={{ color: '#fff', textDecoration: 'none', padding: '8px 24px' }}
+          onClick={e => { e.preventDefault(); onNavigate && onNavigate('/sobre') }}
+        >Sobre</a>
       </nav>
     </>
   )
