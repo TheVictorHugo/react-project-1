@@ -1,40 +1,15 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-
-// Componente para mostrar estrelas de classificação
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div>
-      {[1,2,3,4,5].map((star) => (
-        <span key={star} style={{ color: star <= rating ? '#FFD700' : '#ccc', fontSize: '1.5rem' }}>
-          ★
-        </span>
-      ))}
-    </div>
-  )
-}
-
-// Novo componente para o card do filme
-function MovieCard({ movie }: { movie: { title: string, cover: string, rating: number } }) {
-  return (
-    <div style={{
-      width: 220,
-      border: '1px solid #ddd',
-      borderRadius: 8,
-      padding: 16,
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      textAlign: 'center',
-      background: '#fff'
-    }}>
-      <img src={movie.cover} alt={`Capa do ${movie.title}`} style={{ width: '100%', borderRadius: 4 }} />
-      <h2 style={{ fontSize: '1.2rem', margin: '16px 0 8px' }}>{movie.title}</h2>
-      <StarRating rating={movie.rating} />
-    </div>
-  )
-}
+import MovieCard from './component/MovieCard'
+import Header from './component/Header'
+import Menu from './component/Menu'
 
 function App() {
   const [movies, setMovies] = useState<{ title: string, cover: string, rating: number }[]>([])
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [filter, setFilter] = useState('')
+  const [page, setPage] = useState(1)
+  const itemsPerPage = 10
 
   useEffect(() => {
     // Usando a chave da OMDb API fornecida
@@ -67,6 +42,7 @@ function App() {
           ? Math.round(Number(movie.imdbRating) / 2)
           : 3
       }))
+      console.log("moviesData", moviesData)
       setMovies(moviesData)
     }).catch(() => {
       // fallback para filmes de exemplo caso a API falhe
@@ -90,8 +66,37 @@ function App() {
     })
   }, [])
 
+  const filteredMovies = movies.filter(movie =>
+    movie.title.toLowerCase().includes(filter.toLowerCase())
+  )
+
+  const totalPages = Math.max(1, Math.ceil(filteredMovies.length / itemsPerPage))
+  const paginatedMovies = filteredMovies.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+
+  // Resetar para página 1 ao filtrar
+  useEffect(() => {
+    setPage(1)
+  }, [filter])
+
   return (
     <>
+      <Header onMenuClick={() => setMenuOpen(true)} />
+      <Menu open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '32px 0 0' }}>
+        <input
+          type="text"
+          placeholder="Filtrar filmes..."
+          value={filter}
+          onChange={e => setFilter(e.target.value)}
+          style={{
+            padding: '8px 16px',
+            borderRadius: 4,
+            border: '1px solid #ccc',
+            fontSize: 16,
+            width: 300
+          }}
+        />
+      </div>
       <div style={{
         display: 'flex',
         gap: 24,
@@ -99,9 +104,44 @@ function App() {
         flexWrap: 'wrap',
         margin: '40px auto'
       }}>
-        {movies.map((movie, idx) => (
+        {paginatedMovies.map((movie, idx) => (
           <MovieCard key={idx} movie={movie} />
         ))}
+      </div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 16,
+        margin: '24px 0'
+      }}>
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 1}
+          style={{
+            padding: '6px 16px',
+            borderRadius: 4,
+            border: '1px solid #ccc',
+            background: page === 1 ? '#eee' : '#fff',
+            cursor: page === 1 ? 'not-allowed' : 'pointer'
+          }}
+        >
+          Anterior
+        </button>
+        <span>Página {page} de {totalPages}</span>
+        <button
+          onClick={() => setPage(page + 1)}
+          disabled={page === totalPages}
+          style={{
+            padding: '6px 16px',
+            borderRadius: 4,
+            border: '1px solid #ccc',
+            background: page === totalPages ? '#eee' : '#fff',
+            cursor: page === totalPages ? 'not-allowed' : 'pointer'
+          }}
+        >
+          Próxima
+        </button>
       </div>
     </>
   )
