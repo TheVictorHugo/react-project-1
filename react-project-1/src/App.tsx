@@ -71,6 +71,7 @@ function Home({ onMovieClick }: { onMovieClick: (id: string) => void }) {
       })
   }, [page, filter])
 
+  // Corrigir: resetar para página 1 ao filtrar
   useEffect(() => {
     setPage(1)
   }, [filter])
@@ -91,7 +92,10 @@ function Home({ onMovieClick }: { onMovieClick: (id: string) => void }) {
           type="text"
           placeholder="Filtrar filmes..."
           value={filter}
-          onChange={e => setFilter(e.target.value)}
+          onChange={e => {
+            setFilter(e.target.value)
+            setPage(1) // Resetar página ao filtrar
+          }}
           style={{
             padding: '12px 24px',
             borderRadius: 32,
@@ -130,7 +134,11 @@ function Home({ onMovieClick }: { onMovieClick: (id: string) => void }) {
           padding: '0 32px',
         }}>
           {movies.map((movie, idx) => (
-            <div key={movie.imdbID || idx} onClick={() => movie.imdbID && onMovieClick(movie.imdbID)}>
+            <div
+              key={movie.imdbID || idx}
+              onClick={() => movie.imdbID && onMovieClick(movie.imdbID)}
+              style={{ cursor: 'pointer' }}
+            >
               <MovieCard movie={movie} />
             </div>
           ))}
