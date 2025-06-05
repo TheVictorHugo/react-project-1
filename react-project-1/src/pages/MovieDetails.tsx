@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import Footer from '../components/Footer'
+import './MovieDetails.scss'
 
 type MovieDetailsProps = {
   imdbID: string
@@ -34,10 +36,7 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ imdbID, onBack }) => {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        height: 400, color: '#fff', fontSize: 24
-      }}>
+      <div className="movie-details__loading">
         Carregando detalhes...
       </div>
     )
@@ -45,70 +44,47 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ imdbID, onBack }) => {
 
   if (!movie) {
     return (
-      <div style={{ color: '#fff', textAlign: 'center', marginTop: 40 }}>
+      <div className="movie-details__error">
         Não foi possível carregar os detalhes do filme.
       </div>
     )
   }
 
   return (
-    <div style={{
-      maxWidth: 800,
-      margin: '40px auto',
-      background: '#181818',
-      borderRadius: 12,
-      boxShadow: '0 4px 24px rgba(0,0,0,0.7)',
-      color: '#fff',
-      padding: 32,
-      display: 'flex',
-      gap: 32
-    }}>
-      <img
-        src={movie.Poster && movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/240x360?text=Sem+Imagem"}
-        alt={movie.Title}
-        style={{
-          width: 240,
-          height: 360,
-          objectFit: 'cover',
-          borderRadius: 8,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.5)'
-        }}
-      />
-      <div style={{ flex: 1 }}>
-        <h2 style={{ fontSize: 32, margin: '0 0 16px', fontWeight: 700 }}>{movie.Title}</h2>
-        <div style={{ marginBottom: 12, fontSize: 18 }}>
-          <strong>Ano:</strong> {movie.Year} &nbsp;|&nbsp;
-          <strong>Gênero:</strong> {movie.Genre}
+    <div>
+      <div className="movie-details">
+        <img
+          className="movie-details__poster"
+          src={movie.Poster && movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/240x360?text=Sem+Imagem"}
+          alt={movie.Title}
+        />
+        <div className="movie-details__info">
+          <h2 className="movie-details__title">{movie.Title}</h2>
+          <div className="movie-details__meta">
+            <strong>Ano:</strong> {movie.Year} &nbsp;|&nbsp;
+            <strong>Gênero:</strong> {movie.Genre}
+          </div>
+          <div className="movie-details__meta">
+            <strong>Diretor:</strong> {movie.Director}
+          </div>
+          <div className="movie-details__meta">
+            <strong>Atores:</strong> {movie.Actors}
+          </div>
+          <div className="movie-details__meta">
+            <strong>Nota IMDb:</strong> <span className="movie-details__rating">{movie.imdbRating}</span>
+          </div>
+          <div className="movie-details__plot">
+            {movie.Plot}
+          </div>
+          <button
+            className="movie-details__back-btn"
+            onClick={onBack}
+          >
+            Voltar
+          </button>
         </div>
-        <div style={{ marginBottom: 12, fontSize: 18 }}>
-          <strong>Diretor:</strong> {movie.Director}
-        </div>
-        <div style={{ marginBottom: 12, fontSize: 18 }}>
-          <strong>Atores:</strong> {movie.Actors}
-        </div>
-        <div style={{ marginBottom: 18, fontSize: 18 }}>
-          <strong>Nota IMDb:</strong> <span style={{ color: '#FFD700' }}>{movie.imdbRating}</span>
-        </div>
-        <div style={{ fontSize: 16, lineHeight: 1.6, marginBottom: 24 }}>
-          {movie.Plot}
-        </div>
-        <button
-          onClick={onBack}
-          style={{
-            padding: '10px 32px',
-            borderRadius: 20,
-            border: 'none',
-            background: '#e50914',
-            color: '#fff',
-            fontWeight: 'bold',
-            fontSize: 16,
-            cursor: 'pointer',
-            transition: 'background 0.2s'
-          }}
-        >
-          Voltar
-        </button>
       </div>
+      <Footer />
     </div>
   )
 }

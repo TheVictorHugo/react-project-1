@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 import './App.css'
-import MovieCard from './component/MovieCard'
-import Header from './component/Header'
-import Menu from './component/Menu'
+import MovieCard from './components/MovieCard'
+import Header from './components/Header'
+import Menu from './components/Menu'
 import MovieDetails from './pages/MovieDetails'
-import Footer from './component/Footer'
+import Footer from './components/Footer'
 import Login from './pages/Login'
 
 function Home({ onMovieClick }: { onMovieClick: (id: string) => void }) {
@@ -139,7 +139,14 @@ function Home({ onMovieClick }: { onMovieClick: (id: string) => void }) {
               onClick={() => movie.imdbID && onMovieClick(movie.imdbID)}
               style={{ cursor: 'pointer' }}
             >
-              <MovieCard movie={movie} />
+              <MovieCard
+                movie={{
+                  Title: movie.title,
+                  Poster: movie.cover,
+                  Year: "N/A" // or provide the actual year if available
+                }}
+                onClick={() => movie.imdbID && onMovieClick(movie.imdbID)}
+              />
             </div>
           ))}
         </div>
@@ -252,15 +259,8 @@ function AppRoutes({ user, onLogout }: { user: string | null, onLogout: () => vo
 
   return (
     <>
-      <Header onMenuClick={() => setMenuOpen(true)} />
-      <Menu
-        open={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        onNavigate={route => {
-          setMenuOpen(false)
-          navigate(route)
-        }}
-      />
+      <Header />
+      <Menu onLogout={onLogout} />
       <LoginMenu user={user} onLogout={onLogout} />
       <Routes>
         <Route
